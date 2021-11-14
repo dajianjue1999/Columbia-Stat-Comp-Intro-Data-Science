@@ -1,0 +1,506 @@
+---
+title: "STAT 5206: midterm"
+author: "de2418"
+date: "10/29/2021"
+output: html_document
+---
+
+<!-- You can skip this and start reading at ### Exam rules -->
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+library(knitr)
+library(tidyverse)
+
+# general options
+options(
+  digits = 3,
+  str = strOptions(strict.width = "cut"),
+  width = 69,
+  tibble.width = 69,
+  cli.unicode = FALSE
+)
+
+# ggplot options
+theme_set(theme_light(base_size = 8))
+
+# knitr options
+opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  fig.retina = 0.8, # figures are either vectors or 300 dpi diagrams
+  dpi = 300,
+  out.width = "70%",
+  fig.align = "center",
+  fig.width = 6,
+  fig.asp = 0.618,
+  fig.show = "hold"
+)
+```
+
+### Exam Rules
+
+- This is an open-book, open-note, open-internet exam.
+
+- You cannot consult another intelligent being for this exam nor should you
+  distribute this exam on any platform.
+
+- You need to submit both a RMarkdown file and an HTML of the knitted output:
+
+  - Submissions that do not contain both files will __NOT__ be graded.
+  
+  - In case your code contains errors, you can add the code chunk option
+    `error = TRUE` to ensure that it still knits, as in the example below.
+    
+    ```{r, error = TRUE}
+    stop("I'm an error")
+    ```
+
+- Any attempts to print out an entire data frame or list (unless explicitly
+  asked for) will be penalized.
+
+- Please knit your file throughout the exam, and upload your solution
+  throughout.
+
+- You should not hardcode anything, unless we explicitly tell you it's alright
+  to do so.
+
+- The following type of questions will be ignored:
+
+  - Question about the differences between your solution and the backup
+    dataset.
+
+  - Question about partial credit or specific grade distributions within the
+    problem
+
+  - Questions about installing RStudio or the packages already installed in
+    class.
+
+- The backup datasets are not meant to validate your answers and steps have been
+  taken to prevent you from doing so. Using the backup datasets will result in a
+  small penalty for the question that was meant to generate the dataset. You can
+  later remove the use of the backup dataset if you solved the problem, then
+  there will be no penalty.
+
+- If you use an external source to solve the final, please cite the URL with a
+  comment so we know you grabbed it from online and not from each other.
+
+- Please read the entire exam before asking questions.
+
+### Honor Code (1pt)
+
+We, the undergraduate students of Columbia University, hereby pledge to value
+the integrity of our ideas and the ideas of others by honestly presenting our
+work, respecting authorship, and striving not simply for answers but for
+understanding in the pursuit of our common scholastic goals. In this way, we
+seek to build an academic community governed by our collective efforts,
+diligence, and Code of Honor.
+
+I affirm that I will not plagiarize, use unauthorized materials, or give or
+receive illegitimate help on assignments, papers, or examinations. I will also
+uphold equity and honesty in the evaluation of my work and the work of others. I
+do so to sustain a community built around this Code of Honor.
+
+Have you read the above honor code?
+
+- To answer this, please create a variable called `i_will_follow_the_honor_code`
+  and assign the appropriate `TRUE`/`FALSE` value to it.
+
+- You must also create a character variable named `uni` that contains your UNI.
+  This variable has to match your uni at the top.
+
+- __WARNING:__ You will receive 0 points for the exam if you do not get this
+  problem correct.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r honor}
+i_will_follow_the_honor_code <- TRUE
+uni <- "de2418"
+```
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+### Question 1: general R programming (20 pts)
+
+#### Question 1.1 (5 pts)
+
+In this question, please answer the following 4 basic questions about the
+`mtcars` data frame. To get full mark, each answer should be one line of code!
+
+- Print its first 3 rows:
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 1.1.1}
+# Your code goes here!
+head(mtcars, 3)
+```
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+- What are its dimensions?
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 1.1.2}
+# Your code goes here!
+dim(mtcars)
+```
+mtcars is of 32 rows and 11 columns
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+- What are the names of its variables?
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 1.1.3}
+# Your code goes here!
+names(mtcars)
+```
+As I see, the variable names are "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear" "carb"
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+- What are is the maximum value taken by each of its variables?
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 1.1.4}
+# Your code goes here!
+mtcars %>% summarise_if(is.numeric, max)
+```
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+#### Question 1.2 (6 pts)
+
+- Set the seed to 0.
+
+- Sample
+
+  - 1000 N(0, 1) distributed observations and place them in a 500x2 matrix
+    `x0`,
+
+  - 1000 N(5, 1) distributed observations and place them in a 500x2 matrix `x`.
+
+- Bind together the two matrices by row into a 1000x2 matrix `x`.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 1.2}
+# Your code goes here!
+set.seed(0)
+x0 <- matrix(rnorm(1000, 0, 1), nrow = 500, ncol = 2)
+x <- matrix(rnorm(1000, 5, 1), nrow = 500, ncol = 2)
+x <- rbind(x0, x)
+```
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+#### Question 1.3 (3 pts)
+
+Write a function `mse <- function(y1, y2) {}` that returns the mean of the
+squared difference between the elements of `y1` and `y2`. Here, you can assume
+that `y1` and `y2` can be either vectors or matrices of the same dimension.
+
+Hint: think about what is the expected value of `mse(x0, x1)` ?
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 1.3}
+# Your code goes here!
+mse <- function(y1, y2){mean((y1 - y2)^2)}
+```
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+#### Question 1.4 (6 pts)
+
+Write a function `find_closest <- function(y, centers) {}` where
+
+  - `y` is a numeric vector,
+
+  - `centers` is a list of numeric vectors, each of them having the same length
+    as `y`. The function should return an integer corresponding to the member of
+    the `centers` list that is the __closest__ to `y` according to the mean
+    squared differences.
+
+To check your code, you can use the following:
+
+```{r, eval=FALSE}
+find_closest(c(0, 0), list(c(0, 0), c(5, 5))) # returns 1
+find_closest(c(2, 2), list(c(0, 0), c(5, 5))) # returns 1
+find_closest(c(5, 5), list(c(0, 0), c(5, 5))) # returns 2
+find_closest(c(3, 3), list(c(0, 0), c(5, 5))) # returns 2
+```
+
+Hint: you can use you `mse` function from before along with a `for` loop, or
+better, the appropriate `map_***` variant.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 1.4}
+# Your code goes here!
+find_closest <- function(y, centers){which.min((map2(y, centers, mse)))}
+find_closest(c(0, 0), list(c(0, 0), c(5, 5)))
+```
+
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+### Question 2: data wrangling and visualization (30 pts)
+
+In this section, you will analyze data from the Olympics games covering the
+period 1896-2014. The dataset contains two tables, respectively for the Summer
+and Winter games, each containing the following variables.
+
+  - `Year`: the year the competition was held.
+
+  - `Sport`/`Discipline`/`Event`:
+
+      - `Sport`: that which is governed by an International Federation (IF).
+
+      - `Discipline`: a branch of a sport comprising one or more events.
+
+      - `Event`: a competition in a sport or discipline that gives rise to a
+        ranking.
+
+  - `Country`: a three letter code indicating the country who won the
+    corresponding `Medal` at the corresponding `Event`.
+
+  - `Gender`: can be `"Men"` or `"Women"`.
+
+  - `Medal`: can be `"Gold"`, `"Silved"`, `"Bronze"`.
+
+Given the description above, note that in any given year, an event (e.g., 100M
+running) can appear in 6 rows (2 genders times 3 medals).
+
+#### Question 2.1 (3 pts)
+
+- Load the `olympics_summer.csv` as `summer` and `olympics_winter.csv` as
+  `winter`:
+
+  - Add a column `Season = "Summer"` or season `Season = "Winter"` to each of
+    the two tables.
+
+  - Reorder the columns so that `Year` and `Season` come first, and then
+    everything else.
+
+  - Print the first 6 rows of each table.
+
+- Create `both_seasons`, a data frame containing all the data, by binding
+  `summer` and `winter` together by row.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 2.1}
+# Your code goes here!
+
+#import data
+summer <- read.csv("olympics_summer.csv")
+winter <- read.csv("olympics_winter.csv")
+
+#tidy data
+summer <- summer %>% mutate(Season = "Summer") %>% select(Year, Season, everything())
+winter <- winter %>% mutate(Season = "Winter") %>% select(Year, Season, everything())
+
+#print top 6
+head(summer, 6)
+head(winter, 6)
+
+#combine data frame
+both_seasons <- rbind(summer, winter)
+```
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+#### Question 2.2 (6 pts)
+
+In this question, you will look at the number of sports/disciplines/events per
+seasons and, for each season, the number of sports with the most events.
+
+- Using the `both_seasons` data frame from the previous question, create another
+  data frame `events` that contains a single row for every distinct combinations
+  of the `Season`, `Sport`, `Discipline` and `Event` variables. Note that, if
+  you did not manage to solve the previous question, you can use the backup data
+  set `backup_olympics_both_seasons.csv`.
+
+- From `events`, produce two summary tables to separately answer each of the
+  following two questions:
+
+    - For each of the two seasons, how many distinct sports, disciplines, and
+      events are there?
+
+    - For each of the two seasons, what are the three sports with the most
+      events?
+
+- Comment on your results.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 2.2}
+# Your code goes here!
+# Create event data frame
+events <- both_seasons %>% group_by(Season, Sport, Discipline, Event) %>% summarize(n = n())
+
+#Find distinct events number
+events %>% group_by(Season) %>% summarize(distinct = n())
+
+#Find top 3 events respectively
+events %>% arrange(desc(n)) %>% group_by(Season) %>% slice(1:3)
+```
+For summer, there are 759 distinct sports, disciplines, and events.
+For winter, there are 94 distinct sports, disciplines, and events.
+For summer, the three sports with the most events are High Jump, 100M Freestyle Swimming, 10M Platform Diving
+For winter, the three sports with the most events are Pairs Figure Skating, Individual Figure Skating, 500M Speed Skating.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+#### Question 2.3 (6 pts)
+
+In this question, you will investigate which ones are the most successful
+countries in the post World War II era (i.e., after 1945). Similarly as for the
+previous question, you should proceed using the `both_seasons` data frame.
+
+Restricting yourself to data from post World War II competitions:
+
+  - Compute the overall number of bronze, silver, gold, and total medals won by
+    each country, irrespectively of the season.
+
+  - Display the figures you obtain for the 10 most successful countries, sorted
+    by decreasing number of total medals won. Hint: to make sure that your
+    output has only 10 rows, you might have to do some pivoting.
+
+  - Comment on the results.
+
+  - Repeat the exercise using only winter competitions in the post World War II
+    era. How do the results change?
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 2.3}
+# Your code goes here!
+
+# create a data frame of top 10 countries with medal numbers
+medal_num <- both_seasons %>% filter(Year > 1945) %>% group_by(Country) %>% 
+            summarize(medal_num = n()) %>% arrange(desc(medal_num)) %>% head(10)
+medal_num
+
+# create a data frame of top 10 countries with medal numbers only winter
+medal_num_win <- both_seasons %>% filter(Year > 1945 & Season == "Winter") %>% group_by(Country) %>% 
+            summarize(medal_num = n()) %>% arrange(desc(medal_num)) %>% head(10)
+medal_num_win
+```
+
+The results show that USA and URS got the most number of medals for Summer and Winter Olympic after WWII
+If only considering winter Olympics, the results change that NOR gets to the top, USA drops to 2nd place and URS drops to 3rd place.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+#### Question 2.4 (7 pts)
+
+In this question, you will study the temporal evolution of the number of
+distinct events and medal winning countries. Similarly as for the previous
+question, you should proceed using the `both_seasons` data frame.
+
+- Produce a single figure to visualize, for each of the two seasons,
+
+  - the number of distinct events as a function of the year,
+
+  - the number of distinct medal winning countries as a function of the year.
+
+- Hints:
+
+  - You can use any method of your choice to represent many variables on a
+    single figure (facetting, shapes, linetypes).
+
+  - Make sure that your figure is complete (e.g., axes and legends properly
+    set).
+
+- Comment on the results.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 2.4}
+library(ggplot2)
+
+# find the number of distinct events vs the year
+distinct_event <- both_seasons %>% group_by(Year, Season, Sport, Discipline, Event) %>% summarize(n = n()) %>% group_by(Year, Season) %>% summarize(distinct_event = n())
+
+# find the number of distinct medal winning countries with the year
+distinct_medal_c <- both_seasons %>% group_by(Year, Country, Season) %>% summarize(medal = n()) %>% group_by(Year, Season) %>% summarize(distinct_medal_winning_country = n())
+
+# combine two df
+distinct_event_count <- cbind(distinct_event, distinct_medal_c[3])
+
+#plot
+ggplot(data = distinct_event_count, mapping = aes(x = Year, y = distinct_event, size = distinct_medal_winning_country, color = Season))+
+  geom_point()+
+  labs(title = "Number of Distinct Events as a Function of Year",
+        xlab = "Year",
+        ylab = "Distinct Events",
+        size = "Number of Distinct medal Winning Country")
+```
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+#### Question 2.5 (8 pts)
+
+In this question, you will study the ratio of the number of distinct events for
+women to the number of distinct events for men. Similarly as for the previous
+question, you should proceed using the `both_seasons` data frame.
+
+- Using the `both_seasons` data frame, create another data frame `gender` that
+  contains one row for every distinct combinations of the `Gender`, `Year`, and
+  `Season`, along with an additional column `Count` corresponding to the number
+  of distinct `Event` for the combinations. Hint: recall that any combination of
+  combinations of `Gender`, `Year`, `Season` and `Event` appears multiple time
+  given that there is one row per `Medal`.
+
+- Compute, for each of the two seasons, the ratio of the overall number of
+  distinct events for women to the overall number of distinct events for men.
+  Hint: start from the `gender` data frame.
+
+- Produce a single figure to visualize, for each of the two seasons, the
+  evolution of this ratio as a function of the year. Hint: start again from the
+  `gender` data frame.
+
+- Comment on both the overall results and the figure.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
+```{r 2.5}
+#create data frame gender
+gender<- both_seasons %>% group_by(Gender, Year, Season, Event) %>% summarize(n = n()) %>% group_by(Gender, Year, Season) %>% summarize(Count = n())
+
+#create Women count and men count of distinct events by season
+Women <- gender %>% group_by(Season) %>% filter(Gender == "Women") %>% summarise(women = sum(Count))
+Men <- gender %>% group_by(Season) %>% filter(Gender == "Men") %>% summarise(men = sum(Count))
+
+#Combine and summarize the ratio
+gender_modified <- cbind(Women, Men[2])
+gender_modified %>% group_by(Season) %>% summarize(ratio = women/men)
+
+
+##create Women count and men count of distinct events by season and year
+Women_year <- gender %>% group_by(Season, Year) %>% filter(Gender == "Women") %>% summarise(women = sum(Count))
+Men_year <- gender %>% group_by(Season, Year) %>% filter(Gender == "Men") %>% summarise(men = sum(Count))
+
+#Combine and summarize the ratio
+Gender_year <- full_join(Women_year,Men_year)
+Gender_year <- Gender_year %>% group_by(Season, Year) %>% summarize(ratio = women/men) %>% drop_na()
+
+#Plot
+ggplot(data = Gender_year, mapping = aes(x = Year, y = ratio, color = Season)) +
+  geom_point()+
+  labs(title = "Ratio of Distinct Events of Women over Men as Function of Year",
+       xlab = "Year",
+       ylab = "Ratio")
+```
+
+Overall, there are more distinct men events than women events. But I notice that in winter, there would generally be more women events than in summer. 
+This pattern is supported by the plot. I also notice that there is an increase in number of distinct women events over year.
+
+<!-- !!!!!!!! DO NOT MODIFY THIS LINE !!!!!!!! -->
+
